@@ -2,7 +2,7 @@ define(['utils'], function(utils) {
 
     describe('utils.argsToArray', function() {
 
-        it('should convert an arguments into an array', function() {
+        it('should convert an arguments to array', function() {
             (function() {
                 expect(utils.argsToArray(arguments)).toEqual(['foo', 'bar']);
             }('foo', 'bar'));
@@ -73,6 +73,30 @@ define(['utils'], function(utils) {
             expect(isFunction(['function'])).toBeFalsy();
             expect(isFunction({ 'function': 'name' })).toBeFalsy();
             expect(isFunction(isFunction)).toBeTruthy();
+        });
+
+    });
+
+    describe('utils.pick', function() {
+
+        var pick = utils.pick;
+
+        it('should return a copy of the object with properties filtered by whitelisted keys', function() {
+            var result = pick({ foo: 'foo', bar: 'bar', baz: 'baz' }, ['foo', 'baz']);
+            expect(result).toEqual({ foo: 'foo', baz: 'baz' });
+        });
+
+        it('should pick numeric properties', function() {
+            var result = pick({ 1: 'foo', 2: 'bar', baz: 'baz' }, [1, 2]);
+            expect(result).toEqual({ 1: 'foo', 2: 'bar' });
+        });
+
+        it('should pick prototype properties', function() {
+            var Foo = function() {},
+                result;
+            Foo.prototype = { foo: 'foo', bar: 'bar', baz: 'baz' };
+            result = pick(new Foo(), ['foo', 'baz']);
+            expect(result).toEqual({ foo: 'foo', baz: 'baz' });
         });
 
     });
