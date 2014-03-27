@@ -57,11 +57,11 @@ module.exports = function(grunt) {
             },
             source: {
                 files: '<%= jshint.source.src %>',
-                tasks: ['jshint:source', 'karma:unit:run']
+                tasks: ['jshint:source', 'karma:unit']
             },
             unit: {
                 files: '<%= jshint.unit.src %>',
-                tasks: ['jshint:unit', 'karma:unit:run']
+                tasks: ['jshint:unit', 'karma:unit']
             },
             // json files
             bower: {
