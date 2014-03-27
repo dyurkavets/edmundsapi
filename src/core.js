@@ -10,10 +10,24 @@ define(['./utils', 'exports'], function(utils, exports) {
         var
             /**
              * @private
-             * @attribure _apiKey
+             * @attribute _apiKey
              * @type {String}
              */
-            _apiKey = apiKey;
+            _apiKey = apiKey,
+
+            /**
+             * @private
+             * @attribute _protocol
+             * @type {String}
+             */
+            _protocol = location && location.protocol === 'https:' ? 'https:' : 'http:',
+
+            /**
+             * @private
+             * @attribute _baseUrl
+             * @type {String}
+             */
+            _baseUrl = _protocol + '//api.edmunds.com';
 
         /**
          * @method getApiKey
@@ -24,10 +38,53 @@ define(['./utils', 'exports'], function(utils, exports) {
         };
 
         /**
+         * @method getBaseUrl
+         * @return {String}
+         */
+        this.getBaseUrl = function() {
+            return _baseUrl;
+        };
+
+        /**
+         * @method buildRequestUrl
+         * @param method
+         * @return {String}
+         */
+        this.buildRequestUrl = function(method) {
+            if (typeof method !== 'string') {
+                method = '';
+            }
+            // discard query parameters
+            if (method.indexOf('?') > -1) {
+                method = method.split('?')[0];
+            }
+            // add leading slash if not exist
+            if (method.indexOf('/') !== 0) {
+                method = '/' + method;
+            }
+            // add '/api' prefix if not exist
+            if (method.indexOf('/api/') !== 0) {
+                method = '/api' + method;
+            }
+            return _baseUrl + method;
+        };
+
+        /**
+         * @method filterRequestParameters
+         * @param {Object} parameters
+         * @param {Array} availableParameters
+         * @return {Object}
+         */
+        this.filterRequestParameters = function(parameters, availableParameters) {
+            parameters = utils.pick(parameters, availableParameters);
+            return utils.extend({}, parameters, { fmt: 'json' }); // force json format
+        };
+
+        /**
          * @method fetch
          * @param {String} method
          * @param {Object} parameters
-         * @param {Object} [availableParameters]
+         * @param {Array} [availableParameters]
          * @return {promise}
          */
         this.fetch = function() {
