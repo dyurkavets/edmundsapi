@@ -11,6 +11,72 @@ define(['core'], function(EdmundsApi) {
 
     });
 
+    describe('EdmundsApi#getBaseUrl', function() {
+
+        var api = new EdmundsApi(),
+            expectedProtocol = location.protocol === 'https:' ? 'https:' : 'http:',
+            expectedUrl = expectedProtocol + '//api.edmunds.com';
+
+        it('should return a base url', function() {
+            var url = api.getBaseUrl();
+            expect(url).toBe(expectedUrl);
+        });
+
+        it('should return a url with correct protocol', function() {
+            var url = api.getBaseUrl();
+            expect(url.indexOf(expectedProtocol)).toBe(0);
+        });
+
+    });
+
+    describe('EdmundsApi#buildRequestUrl', function() {
+
+        var api = new EdmundsApi(),
+            expectedUrl = api.getBaseUrl() + '/api/foo/bar/baz';
+
+        it('/api/foo/bar/baz', function() {
+            var url = api.buildRequestUrl('/api/foo/bar/baz');
+            expect(url).toBe(expectedUrl);
+        });
+
+        it('api/foo/bar/baz', function() {
+            var url = api.buildRequestUrl('api/foo/bar/baz');
+            expect(url).toBe(expectedUrl);
+        });
+
+        it('/foo/bar/baz', function() {
+            var url = api.buildRequestUrl('/foo/bar/baz');
+            expect(url).toBe(expectedUrl);
+        });
+
+        it('foo/bar/baz', function() {
+            var url = api.buildRequestUrl('foo/bar/baz');
+            expect(url).toBe(expectedUrl);
+        });
+
+        it('foo/bar/baz?query', function() {
+            var url = api.buildRequestUrl('foo/bar/baz?query');
+            expect(url).toBe(expectedUrl);
+        });
+
+    });
+
+    describe('EdmundsApi#filterRequestParameters', function() {
+
+        var api = new EdmundsApi();
+
+        it('should return parameters for which keys are in whitelist', function() {
+            var parameters = api.filterRequestParameters({ foo: 'foo', bar: 'bar' }, ['bar']);
+            expect(parameters.foo).not.toBeDefined();
+            expect(parameters.bar).toBe('bar');
+        });
+
+        it('should not override "fmt" parameter', function() {
+            var parameters = api.filterRequestParameters({ fmt: 'foo' }, []);
+            expect(parameters.fmt).toEqual('json');
+        });
+    });
+
     xdescribe('EdmundsApi#fetch', function() {
 
         // TODO
