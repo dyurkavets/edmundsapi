@@ -78,6 +78,21 @@ define(function() {
             return typeof obj === 'function';
         };
 
+        /**
+         * Returns a copy of the object, filtered to only have values for the whitelisted keys.
+         * @method pick
+         * @param {Object} obj An object which properties to be copied.
+         * @param {Array} keys A list of properties to be copied.
+         * @returns {Object}
+         */
+        exports.pick = function(obj, keys) {
+            var copy = {};
+            exports.forEach(keys, function(key) {
+                copy[key] = obj[key];
+            });
+            return copy;
+        };
+
         return exports;
 
     }());
