@@ -2,55 +2,106 @@ define(['./utils', 'exports'], function(utils, exports) {
 
     /**
      * @class EdmundsApi
-     * @param {String} apiKey
+     * @param {Object} options
+     *     @param {String} options.apiKey
+     *     @param {Number} options.timeout
      * @constructor
      */
-    function EdmundsApi(apiKey) {
+    function EdmundsApi(options) {
+        var availableOptions = ['apiKey', 'timeout'];
+        options = utils.defaults({}, options, this.defaults);
+        utils.extend(this, utils.pick(options, availableOptions));
+    }
 
-        var
-            /**
-             * @private
-             * @attribute _apiKey
-             * @type {String}
-             */
-            _apiKey = apiKey,
-
-            /**
-             * @private
-             * @attribute _protocol
-             * @type {String}
-             */
-            _protocol = location && location.protocol === 'https:' ? 'https:' : 'http:',
-
-            /**
-             * @private
-             * @attribute _baseUrl
-             * @type {String}
-             */
-            _baseUrl = _protocol + '//api.edmunds.com';
+    // static properties
+    utils.extend(EdmundsApi, {
 
         /**
-         * @method getApiKey
-         * @return {String}
+         * @static
+         * @property BASE_URL
+         * @type {String}
          */
-        this.getApiKey = function() {
-            return _apiKey;
-        };
+        BASE_URL: (location && location.protocol === 'https:' ? 'https:' : 'http:') + '//api.edmunds.com',
 
         /**
-         * @method getBaseUrl
-         * @return {String}
+         * @static
+         * @method extend
+         * @param {Object} [prototypeProperties]
+         * @param {Object} [staticProperties]
+         * @return {EdmundsApi}
          */
-        this.getBaseUrl = function() {
-            return _baseUrl;
-        };
+        extend: function(prototypeProperties, staticProperties) {
+            var Parent = this,
+                Child, Surrogate;
+
+            Child = function() {
+                return Parent.apply(this, arguments);
+            };
+
+            // add static properties
+            utils.extend(Child, Parent, staticProperties);
+
+            // original noConflict method should not be added,
+            // because it caches a global EdmundsApi variable
+            if (Child.noConflict === EdmundsApi.noConflict) {
+                delete Child.noConflict;
+            }
+
+            Surrogate = function() {
+                this.constructor = Child;
+            };
+
+            Surrogate.prototype = Parent.prototype;
+            Child.prototype = new Surrogate();
+
+            // add instance properties
+            utils.extend(Child.prototype, prototypeProperties);
+
+            return Child;
+        },
+
+        /**
+         * @static
+         * @method noConflict
+         * @return {EdmundsApi}
+         */
+        noConflict: (function(previousEdmundsApi) {
+            return function() {
+                exports.EdmundsApi = previousEdmundsApi;
+                return this;
+            };
+        }(exports.EdmundsApi))
+
+    });
+
+    // instance properties
+    utils.extend(EdmundsApi.prototype, {
+
+        /**
+         * @property apiKey
+         * @type {String}
+         */
+
+        /**
+         * @property timeout
+         * @type {Number}
+         * @default 5000
+         */
+
+        /**
+         * @property defaults
+         * @type {Object}
+         */
+        defaults: {
+            timeout: 5000
+        },
 
         /**
          * @method buildRequestUrl
          * @param method
          * @return {String}
          */
-        this.buildRequestUrl = function(method) {
+        buildRequestUrl: function(method) {
             if (typeof method !== 'string') {
                 method = '';
             }
@@ -66,8 +117,8 @@ define(['./utils', 'exports'], function(utils, exports) {
             if (method.indexOf('/api/') !== 0) {
                 method = '/api' + method;
             }
-            return _baseUrl + method;
-        };
+            return EdmundsApi.BASE_URL + method;
+        },
 
         /**
          * @method filterRequestParameters
@@ -75,10 +126,10 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @param {Array} availableParameters
          * @return {Object}
          */
-        this.filterRequestParameters = function(parameters, availableParameters) {
+        filterRequestParameters: function(parameters, availableParameters) {
             parameters = utils.pick(parameters, availableParameters);
             return utils.extend({}, parameters, { fmt: 'json' }); // force json format
-        };
+        },
 
         /**
          * @method fetch
@@ -87,59 +138,11 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @param {Array} [availableParameters]
          * @return {promise}
          */
-        this.fetch = function() {
+        fetch: function() {
             // TODO
-        };
-
-    }
-
-    /**
-     * @static
-     * @method extend
-     * @param {Object} [prototypeProperties]
-     * @param {Object} [staticProperties]
-     * @return {EdmundsApi}
-     */
-    EdmundsApi.extend = function(prototypeProperties, staticProperties) {
-        var Parent = this,
-            Child, Surrogate;
-
-        Child = function() {
-            return Parent.apply(this, arguments);
-        };
-
-        // add static properties
-        utils.extend(Child, Parent, staticProperties);
-
-        // original noConflict method should not be added,
-        // because it caches a global EdmundsApi variable
-        if (Child.noConflict === EdmundsApi.noConflict) {
-            delete Child.noConflict;
         }
 
-        Surrogate = function() {
-            this.constructor = Child;
-        };
-
-        Surrogate.prototype = Parent.prototype;
-        Child.prototype = new Surrogate();
-
-        // add instance properties
-        utils.extend(Child.prototype, prototypeProperties);
-
-        return Child;
-    };
-
-    /**
-     * @method noConflict
-     * @return {EdmundsApi}
-     */
-    EdmundsApi.noConflict = (function(previousEdmundsApi) {
-        return function() {
-            exports.EdmundsApi = previousEdmundsApi;
-            return this;
-        };
-    }(exports.EdmundsApi));
+    });
 
     return EdmundsApi;
 
