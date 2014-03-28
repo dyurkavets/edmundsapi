@@ -1,12 +1,8 @@
 define(['utils'], function(utils) {
 
-    describe('utils.argsToArray', function() {
+    describe('utils.defaults', function() {
 
-        it('should convert an arguments to array', function() {
-            (function() {
-                expect(utils.argsToArray(arguments)).toEqual(['foo', 'bar']);
-            }('foo', 'bar'));
-        });
+        // TODO
 
     });
 
@@ -97,6 +93,16 @@ define(['utils'], function(utils) {
             Foo.prototype = { foo: 'foo', bar: 'bar', baz: 'baz' };
             result = pick(new Foo(), ['foo', 'baz']);
             expect(result).toEqual({ foo: 'foo', baz: 'baz' });
+        });
+
+    });
+
+    describe('utils.toArray', function() {
+
+        it('should convert an arguments to array', function() {
+            (function() {
+                expect(utils.toArray(arguments)).toEqual(['foo', 'bar']);
+            }('foo', 'bar'));
         });
 
     });

@@ -8,16 +8,6 @@ define(function() {
             exports = {};
 
         /**
-         * Converts an arguments object into an array.
-         * @method argsToArray
-         * @param {Arguments} args An arguments object
-         * @return {Array}
-         */
-        exports.argsToArray = function(args) {
-            return slice.call(args);
-        };
-
-        /**
          * Fills in undefined properties in destination object with values from the source objects,
          * and returns the object.
          * @method defaults
@@ -106,6 +96,16 @@ define(function() {
                 copy[key] = obj[key];
             });
             return copy;
+        };
+
+        /**
+         * Converts an arguments object into an array.
+         * @method toArray
+         * @param {Arguments} args An arguments object
+         * @return {Array}
+         */
+        exports.toArray = function(args) {
+            return slice.call(args);
         };
 
         return exports;
