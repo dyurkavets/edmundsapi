@@ -2,9 +2,22 @@ define(['core'], function(EdmundsApi) {
 
     var global = window;
 
-    describe('EdmundsApi#defaults', function() {
+    describe('EdmundsApi', function() {
 
-        // TODO
+        it('should set apiKey from options', function() {
+            var api = new EdmundsApi({ apiKey: 'foobar' });
+            expect(api.apiKey).toBe('foobar');
+        });
+
+        it('should set timeout from options', function() {
+            var api = new EdmundsApi({ timeout: 42 });
+            expect(api.timeout).toBe(42);
+        });
+
+        it('should not set prohibited options', function() {
+            var api = new EdmundsApi({ foo: 'bar' });
+            expect(api.foo).not.toBeDefined();
+        });
 
     });
 
