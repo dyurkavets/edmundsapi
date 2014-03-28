@@ -9,8 +9,7 @@ define(['./utils', 'exports'], function(utils, exports) {
      */
     function EdmundsApi(options) {
         var availableOptions = ['apiKey', 'timeout'];
-        options = utils.defaults({}, options, this.defaults);
-        utils.extend(this, utils.pick(options, availableOptions));
+        utils.extend(this, utils.pick(options || {}, availableOptions));
     }
 
     // static properties
@@ -87,14 +86,7 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @type {Number}
          * @default 5000
          */
-
-        /**
-         * @property defaults
-         * @type {Object}
-         */
-        defaults: {
-            timeout: 5000
-        },
+        timeout: 5000,
 
         /**
          * @method buildRequestUrl
