@@ -3,10 +3,8 @@ define(function() {
     var utils = (function() {
 
         var arrayPrototype = Array.prototype,
-            objectPrototype = Object.prototype,
             nativeForEach = arrayPrototype.forEach,
             slice = arrayPrototype.slice,
-            hasOwn = objectPrototype.hasOwnProperty,
             exports = {};
 
         /**
@@ -20,25 +18,42 @@ define(function() {
         };
 
         /**
-         * Copies all of the properties in the source objects over to the destination object.
-         * @method extend
-         * @param {Object} destination An object to be extended.
-         * @param {Object} source* An object which properties to be copied into destination.
-         * @return {Object}
+         * Fills in undefined properties in destination object with values from the source objects,
+         * and returns the object.
+         * @method defaults
+         * @param {Object} destination
+         * @param {Object} [source]*
+         * @returns {Object}
          */
-        exports.extend = function() {
-            var sources = exports.argsToArray(arguments),
-                destination = sources.shift();
-            if (!destination) {
-                return destination;
-            }
+        exports.defaults = function(destination) {
+            var sources = slice.call(arguments, 1);
             exports.forEach(sources, function(source) {
                 var key;
                 if (source) {
                     for (key in source) {
-                        if (hasOwn.call(source, key)) {
+                        if (destination[key] === void 0) {
                             destination[key] = source[key];
                         }
+                    }
+                }
+            });
+            return destination;
+        };
+
+        /**
+         * Copies all of the properties in the source objects over to the destination object.
+         * @method extend
+         * @param {Object} destination An object to be extended.
+         * @param {Object} [source]* An object which properties to be copied into destination.
+         * @return {Object}
+         */
+        exports.extend = function(destination) {
+            var sources = slice.call(arguments, 1);
+            exports.forEach(sources, function(source) {
+                var key;
+                if (source) {
+                    for (key in source) {
+                        destination[key] = source[key];
                     }
                 }
             });
