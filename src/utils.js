@@ -99,13 +99,13 @@ define(function() {
         };
 
         /**
-         * Converts an arguments object into an array.
+         * Converts an object into an array.
          * @method toArray
-         * @param {Arguments} args An arguments object
+         * @param {any} obj An object
          * @return {Array}
          */
-        exports.toArray = function(args) {
-            return slice.call(args);
+        exports.toArray = function(obj) {
+            return slice.call(obj);
         };
 
         return exports;
