@@ -2,37 +2,25 @@ define(['core'], function(EdmundsApi) {
 
     var global = window;
 
-    describe('EdmundsApi#getApiKey', function() {
+    describe('EdmundsApi#defaults', function() {
 
-        it('should return an API key', function() {
-            var api = new EdmundsApi('foobar');
-            expect(api.getApiKey()).toBe('foobar');
-        });
-
-    });
-
-    describe('EdmundsApi#getBaseUrl', function() {
-
-        var api = new EdmundsApi(),
-            expectedProtocol = location.protocol === 'https:' ? 'https:' : 'http:',
-            expectedUrl = expectedProtocol + '//api.edmunds.com';
-
-        it('should return a base url', function() {
-            var url = api.getBaseUrl();
-            expect(url).toBe(expectedUrl);
-        });
-
-        it('should return a url with correct protocol', function() {
-            var url = api.getBaseUrl();
-            expect(url.indexOf(expectedProtocol)).toBe(0);
-        });
+        // TODO
 
     });
 
     describe('EdmundsApi#buildRequestUrl', function() {
 
         var api = new EdmundsApi(),
-            expectedUrl = api.getBaseUrl() + '/api/foo/bar/baz';
+            expectedUrl = '/api/foo/bar/baz',
+            originalBaseUrl = EdmundsApi.BASE_URL;
+
+        beforeEach(function() {
+            EdmundsApi.BASE_URL = '';
+        });
+
+        afterEach(function() {
+            EdmundsApi.BASE_URL = originalBaseUrl;
+        });
 
         it('/api/foo/bar/baz', function() {
             var url = api.buildRequestUrl('/api/foo/bar/baz');
