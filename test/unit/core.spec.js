@@ -62,6 +62,17 @@ define(['core'], function(EdmundsApi) {
 
     });
 
+    describe('EdmundsApi#buildMethod', function() {
+
+        var api = new EdmundsApi();
+
+        it('should return a correct path', function() {
+            var method = api.buildMethod('foo', 'bar', 'baz');
+            expect(method).toBe('foo/bar/baz');
+        });
+
+    });
+
     describe('EdmundsApi#filterRequestParameters', function() {
 
         var api = new EdmundsApi();
