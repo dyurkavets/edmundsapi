@@ -83,10 +83,6 @@ define(['core'], function(EdmundsApi) {
             expect(parameters.bar).toBe('bar');
         });
 
-        it('should not override "fmt" parameter', function() {
-            var parameters = api.filterRequestParameters({ fmt: 'foo' }, []);
-            expect(parameters.fmt).toEqual('json');
-        });
     });
 
     xdescribe('EdmundsApi#fetch', function() {
