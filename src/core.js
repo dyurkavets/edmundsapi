@@ -28,6 +28,27 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @param {Object} [prototypeProperties]
          * @param {Object} [staticProperties]
          * @return {EdmundsApi}
+         *
+         * @example
+         * var VehicleApi = EdmundsApi.extend({
+         *
+         *   findMakes: function(parameters) {
+         *     var method = this.buildMethod(),
+         *         availableParameters = ['state', 'year', 'view'];
+         *     return this.fetch(method, parameters, availableParameters);
+         *   },
+         *
+         *   findNewMakes: function(parameters) {
+         *     parameters = EdmundsApi.utils.extend({}, parameters, { state: 'new' });
+         *     return this.findMakes(parameters);
+         *   }
+         *
+         * });
+         *
+         * var vehicleApi = new VehicleApi('your_api_key');
+         * vehicleApi.findNewMakes({ year: 2014 }).done(function(response) {
+         *   console.log(response.makes);
+         * });
          */
         extend: function(prototypeProperties, staticProperties) {
             var Parent = this,
@@ -69,7 +90,14 @@ define(['./utils', 'exports'], function(utils, exports) {
                 exports.EdmundsApi = previousEdmundsApi;
                 return this;
             };
-        }(exports.EdmundsApi))
+        }(exports.EdmundsApi)),
+
+        /**
+         * @static
+         * @property utils
+         * @type {Object}
+         */
+        utils: utils
 
     });
 
@@ -113,6 +141,27 @@ define(['./utils', 'exports'], function(utils, exports) {
         },
 
         /**
+         * @method buildMethod
+         * @param {String} [path]*
+         * @return {String}
+         *
+         * @example
+         * EdmundsApi.extend({
+         *
+         *   findMakeModelYearStyles: function(make, model, year, parameters) {
+         *     var method = this.buildMethod('/api/vehicle/v2', 'bmw', '3-series', 2013, 'styles'),
+         *         availableParameters = ['state', 'submodel', 'view', 'category'];
+         *     return this.fetch(method, parameters, availableParameters);
+         *   }
+         *
+         * });
+         */
+        buildMethod: function() {
+            var paths = utils.toArray(arguments);
+            return paths.join('/');
+        },
+
+        /**
          * @method filterRequestParameters
          * @param {Object} parameters
          * @param {Array} availableParameters
@@ -129,6 +178,23 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @param {Object} parameters
          * @param {Array} [availableParameters]
          * @return {promise}
+         *
+         * @example
+         * var api = new EdmundsApi('your_api_key');
+         * var request = api.fetch('/api/vehicle/v2/makes', { state: 'new' });
+         *
+         * request.done(function(response) {
+         *   console.log(response.makes);
+         * });
+         *
+         * request.fail(function(error) {
+         *   console.log(error.message);
+         * });
+         *
+         * request.always(function() {
+         *   console.log('request has been completed');
+         * });
+         *
          */
         fetch: function() {
             // TODO
