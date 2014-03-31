@@ -1,4 +1,4 @@
-define(['./utils', 'exports'], function(utils, exports) {
+define(['./utils', './request', 'exports'], function(utils, request, exports) {
 
     /**
      * @class EdmundsApi
@@ -168,8 +168,8 @@ define(['./utils', 'exports'], function(utils, exports) {
          * @return {Object}
          */
         filterRequestParameters: function(parameters, availableParameters) {
-            parameters = utils.pick(parameters, availableParameters);
-            return utils.extend({}, parameters, { fmt: 'json' }); // force json format
+            parameters = utils.pick(parameters || {}, availableParameters);
+            return utils.extend({}, parameters);
         },
 
         /**
@@ -196,8 +196,17 @@ define(['./utils', 'exports'], function(utils, exports) {
          * });
          *
          */
-        fetch: function() {
-            // TODO
+        fetch: function(method, parameters, availableParameters) {
+            parameters = this.filterRequestParameters(parameters, availableParameters);
+            utils.extend(parameters, {
+                fmt: 'json',
+                'api_key': this.apiKey
+            });
+            return request.jsonp({
+                url: this.buildRequestUrl(method),
+                data: parameters,
+                timeout: this.timeout
+            });
         }
 
     });
